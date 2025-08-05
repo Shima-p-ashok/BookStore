@@ -27,8 +27,8 @@ export const getAllBookAPI = (reqHeader) => {
         return commonAPI('GET', `${serverURL}/api/allBook`, "", reqHeader)
 }
 
-export const getABookAPI = (reqHeader) => {
-        return commonAPI('GET', `${serverURL}/api/getABook/:id`, "", reqHeader)
+export const getABookAPI = (id, reqHeader) => {
+        return commonAPI('GET', `${serverURL}/api/getABook/${id}`, "", reqHeader)
 }
 
 

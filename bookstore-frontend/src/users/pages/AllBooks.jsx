@@ -79,8 +79,8 @@ function AllBooks() {
 
 
       <div className='flex mt-20'>
-        <div className='w-64 ms-30 mb-8 flex-none...'>
-          <h1 className='mb-5 font-bold mt-12'>Filters</h1>
+        <div className='w-70 ms-30 mb-8 flex-none...'>
+          <h1 className='mb-5 font-bold mt-12 me-70'>Filters</h1>
           <div>
             <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Literary Fiction</label>

@@ -23,8 +23,10 @@ bookServer.use(cors())
 
 //7. implementing middleware
 bookServer.use(express.json())
+
 // bookServer.use(appmiddleware)
 bookServer.use(route)
+bookServer.use('/upload', express.static('./uploads'))
 
 //3. Define port
 PORT = 3000 || process.env.PORT

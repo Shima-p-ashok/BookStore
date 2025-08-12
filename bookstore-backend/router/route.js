@@ -28,7 +28,8 @@ route.get('/api/admin-getallusers',jwtMiddleware,usercontroller.getAllUsersAdmin
 //Jobs-Admin
 route.post('/api/admin-addJobs',jwtMiddleware,jobcontroller.addJobs)
 route.get('/api/admin-allJobs',jwtMiddleware,jobcontroller.getAllJobs)
-route.get('/api/admin-deleteJobs',jwtMiddleware,jobcontroller.deleteJobs)
+route.delete('/api/admin-deleteJobs/:id', jobcontroller.deleteJobs)
+
 
 
 //export the route

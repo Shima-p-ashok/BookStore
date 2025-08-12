@@ -24,21 +24,29 @@ function AllBooks() {
   const [tempdata, setTempdata] = useState([])
 
   const getAllBooks = async (searchKey, token) => {
-    
-    try {
-      //create request header, includes token
+    //create request header, includes token
       const reqHeader = {Authorization: `Bearer ${token}`}
+    try {
+      
       
       //API call
       const result = await getAllBookAPI(searchKey, reqHeader)
       console.log(result);
-      setAllBooks(result.data)
+     if (result.status == 200) {
+       setAllBooks(result.data)
       setTempdata(result.data) //temporary
+     }
+     else{
+      console.log("Failed to fetch books");
+      
+     }
     }
     catch (err) {
       console.log(err);
     }
   }
+  console.log(allBooks);
+  
 
   const handleFilter = (data)=>{
     console.log(data);
@@ -53,7 +61,7 @@ function AllBooks() {
     }
   }
 
-  console.log(allBooks);
+  // console.log(allBooks);
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("token");
@@ -71,9 +79,6 @@ function AllBooks() {
 }, [token, searchKey]);
 
 console.log(token);
-
-
-
 
 
   return (
@@ -95,7 +100,7 @@ console.log(token);
                   type="text"
                   placeholder="Search Book Name (Eg: Alchemist)"
                   value={searchKey}
-                  onChange={(e) => setSearchKey(e.target.value)}
+                  onChange={e => setSearchKey(e.target.value)}
                   className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                 />
                 <Button className="flex flex-wrap gap-2 !bg-amber-800">Search</Button>
@@ -160,7 +165,7 @@ console.log(token);
                         {item.title}
                       </h5>
                       <p className="font-normal text-gray-700 dark:text-gray-400 pb-4">
-                        Price : {item.price}
+                        Price : ${item.price}
                       </p>
                     </Card>
                     </Link>

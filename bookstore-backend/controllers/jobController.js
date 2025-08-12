@@ -30,8 +30,8 @@ exports.addJobs = async (req, res) => {
 
 exports.getAllJobs = async(req, res)=>{
     try {
-    const jobs = await jobs.find()
-    res.status(200).json(jobs);
+    const getjobs = await jobs.find()
+    res.status(200).json(getjobs);
   } catch (err) {
     res.status(500).json("Err" + err)
   }       
@@ -40,7 +40,7 @@ exports.getAllJobs = async(req, res)=>{
 exports.deleteJobs = async(req, res)=>{
     const {id} = req.params
     try {
-    await jobs.findByIdAndDelete({_id:id})
+    await jobs.findByIdAndDelete(id)
     res.status(200).json("Jobs Deleted...");
   } catch (err) {
     res.status(500).json("Err" + err)

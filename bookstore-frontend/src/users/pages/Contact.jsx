@@ -20,7 +20,7 @@ function Contact() {
     <div>
       <Header />
       <div>
-        <h1 className='text-4xl text-center m-4' >Contact us</h1>
+        <h1 className='text-4xl text-center  mt-20' >Contact us</h1>
       </div>
       <div className='text-xl text-center text-justify m-10' >
         We’re always happy to connect with you.

@@ -117,6 +117,7 @@ function Profile() {
                                     progress: undefined,
                                     theme: "light"
                                   })
+                                   handleReset()
                     }
 
             }

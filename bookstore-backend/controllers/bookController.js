@@ -40,9 +40,29 @@ exports.getHomeBooks = async(req, res)=>{
 }
 
 exports.getAllBooks=async(req, res)=>{
+  console.log("Inside all books");
+  
+  console.log(req.query);
+  const searchKey = req.query.search 
+  const email = req.query.userMail
+  
+  console.log("Inside getAllBooks");
+  
     
   try {
-    const allBooks = await books.find()
+    const query = {
+      title:{
+        $regex : searchKey,
+        $options : "i"
+      },
+      userMail:{
+        $ne:email
+      },
+      status: "approved"
+
+    }
+
+    const allBooks = await books.find(query)
     res.status(200).json(allBooks);
   } catch (err) {
     res.status(500).json("Err" + err)
@@ -60,4 +80,33 @@ exports.getABook=async(req, res)=>{
   } catch (err) {
     res.status(500).json("Err" + err)
   }
+}
+
+
+
+//--------------------------ADMIN------------------------------------
+
+exports.getAllBookAdminController = async(req,res) =>{
+    try{
+        const allExistingBooks = await books.find()
+        res.status(200).json(allExistingBooks)
+
+    }catch(err){
+        res.status(500).json("Err" + err)
+
+    }
+
+}
+
+exports.approveBooksadminController = async(req,res)=>{
+        const {_id,title,author,noofpages,imageUrl,price,dprice,abstract,publisher,language,isbn,category, UploadedImage, status,userMail,brought}=req.body
+        try{
+            const existingBook = await books.findByIdAndUpdate({_id},{title,author,noofpages,imageUrl,price,dprice,abstract,publisher,language,isbn,category, UploadedImage, status:'approved',userMail,brought},{new:true})
+            await existingBook.save()
+            res.status(200).json(existingBook)
+
+        }catch(err){
+            res.status(500).json("Err"+err)
+        }
+
 }

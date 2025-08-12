@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { Button } from "flowbite-react";
 import PageFooter from '../../components/PageFooter';
@@ -6,28 +6,50 @@ import { Card } from 'flowbite-react';
 import { getAllBookAPI } from '../../services/allAPIs';
 import { all } from 'axios';
 import { Link } from 'react-router-dom';
+import { SearchContext } from '../../context/ContextShare';
 
 
 function AllBooks() {
+
+  const {searchKey, setSearchKey} = useContext(SearchContext)
+  console.log(searchKey); //""
+  
 
   //To hold allbooks
   const [allBooks, setAllBooks] = useState([])
   //To hold token
   const [token, setToken] = useState("")
 
-  const getAllBooks = async () => {
+  //temporarily hold data 
+  const [tempdata, setTempdata] = useState([])
+
+  const getAllBooks = async (searchKey, token) => {
     
     try {
       //create request header, includes token
       const reqHeader = {Authorization: `Bearer ${token}`}
       
       //API call
-      const result = await getAllBookAPI(reqHeader)
+      const result = await getAllBookAPI(searchKey, reqHeader)
       console.log(result);
       setAllBooks(result.data)
+      setTempdata(result.data) //temporary
     }
     catch (err) {
       console.log(err);
+    }
+  }
+
+  const handleFilter = (data)=>{
+    console.log(data);
+
+    //Assign data to actual state
+    if (data == 'No-filter') {
+      setAllBooks(tempdata)
+    } 
+    else
+     {
+      setAllBooks(tempdata.filter(item => (item.category).toLowerCase().trim() == data.toLowerCase().trim()))
     }
   }
 
@@ -44,9 +66,13 @@ function AllBooks() {
 
   useEffect(() => {
   if (token) {
-    getAllBooks(); // Now runs only AFTER token is set
+    getAllBooks(searchKey, token); // Now runs only AFTER token is set
   }
-}, [token]);
+}, [token, searchKey]);
+
+console.log(token);
+
+
 
 
 
@@ -62,12 +88,14 @@ function AllBooks() {
               </label> */}
             <div className="mt-5 mx-20">
               <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
-                <div className="shrink-0 text-base text-gray-500 select-none sm:text-sm/6">Search Book Name</div>
+               
                 <input
                   id="username"
                   name="username"
                   type="text"
-                  placeholder="Eg: Alchemist"
+                  placeholder="Search Book Name (Eg: Alchemist)"
+                  value={searchKey}
+                  onChange={(e) => setSearchKey(e.target.value)}
                   className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                 />
                 <Button className="flex flex-wrap gap-2 !bg-amber-800">Search</Button>
@@ -82,39 +110,39 @@ function AllBooks() {
         <div className='w-70 ms-30 mb-8 flex-none...'>
           <h1 className='mb-5 font-bold mt-12 me-70'>Filters</h1>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
+            <input type="radio" onClick={()=>handleFilter('Literary Fiction')} id='Literary Fiction' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Literary Fiction</label>
           </div>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
+            <input type="radio" onClick={()=>handleFilter('Philosophy')} id='Philosophy' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Philosophy</label>
           </div>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
+            <input type="radio" onClick={()=>handleFilter('Thriller')} id='Thriller' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Thriller</label>
           </div>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
+            <input type="radio" onClick={()=>handleFilter('Romance')} id='Romance' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Romance</label>
           </div>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
+            <input type="radio" onClick={()=>handleFilter('Horror')} id='Horror' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Horror</label>
           </div>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
+            <input type="radio" onClick={()=>handleFilter('Auto/Biography')} id='Auto/Biography' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Auto/Biography</label>
           </div>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
+            <input type="radio" onClick={()=>handleFilter('Self-Help')} id='Self-Help' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Self-Help</label>
           </div>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-4 me-1' />
+            <input type="radio" onClick={()=>handleFilter('Politics')} id='Politics' name='filter' className='mb-4 me-1' />
             <label htmlFor="">Politics</label>
           </div>
           <div>
-            <input type="radio" id='philosophy' name='filter' className='mb-3 me-1' />
+            <input type="radio" onClick={()=>handleFilter('No-filter')} id='No-filter' name='filter' className='mb-3 me-1' />
             <label htmlFor="">No-filter</label>
           </div>
         </div>
@@ -124,7 +152,7 @@ function AllBooks() {
             {
               allBooks.length > 0 ?
                 allBooks.map(item => (
-                  <div className="py-4">
+                  <div className="py-4" hidden={item?.status == 'pending' || item?.status == 'sold'}>
                     <Link to= {`/viewBook/${item._id}`}>
                        <Card className=" flex flex-wrap !bg-amber-100 h-100 w-70 p-2 text-center" horizontal>
                       <img src={item.imageUrl} className="h-70 pt-10 w-80 p-2 object-cover" alt="" />

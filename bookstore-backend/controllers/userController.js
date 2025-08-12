@@ -84,3 +84,17 @@ exports.googleAuth=async(req, res)=>{
     }
 
 }
+
+
+//---------------------------------ADMIN------------------------------------
+
+exports.getAllUsersAdminController = async(req,res) =>{
+    const email = req.payload.userMail
+    try{
+        const allExistingUsers = await users.find({email:{$ne : email}})
+        res.status(200).json(allExistingUsers)
+
+    }catch(err){
+        res.status(500).json("Err" + err)
+    }
+}

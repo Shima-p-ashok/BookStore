@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AdminHeader from '../components/AdminHeader'
 import AdminSidebar from '../components/AdminSidebar'
 import { Card, Button, Textarea} from "flowbite-react";
@@ -8,12 +8,88 @@ import { FaLocationDot } from "react-icons/fa6";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 import { Modal, ModalBody, ModalFooter, ModalHeader} from "flowbite-react";
+import { ToastContainer, toast } from 'react-toastify';
+import { uploadJobAPI } from '../../services/allAPIs';
 
 
-function AdminBooks() {
+function AdminCareers() {
   const [jobStatus, setJobStatus] = useState(false)
   const [viewStatus, setViewStatus] = useState(false)
   const [openModal, setOpenModal] = useState(false);
+
+  const [token, setToken] = useState()
+  
+
+  //To hold Book Details
+      const [jobDetails, setJobDetails] = useState({
+          title: "", location:"", jobType:"", salary:"", qualification:"", experience:"", description:""
+      })
+      
+      const handleAddJob = async() =>{
+        const {title, location, jobType, salary, qualification, experience, description} = jobDetails
+        console.log(jobDetails);
+         if (!title || !location || !jobType || !salary || !qualification || !experience || !description ) {
+                    toast.warn("Please fill the form!", {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light"
+                    })
+                }
+                else {
+                    //ADD API
+                    //create request header, includes token
+                    const reqHeader = {
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}` // ✅ Must have Bearer
+}
+                    
+                    try {
+                        const result = await uploadJobAPI(jobDetails, reqHeader)
+                        console.log(result);
+                        if (result.status == 200) {
+                         toast.success("Job Added Succesfully !", {
+                                  position: "top-center",
+                                  autoClose: 5000,
+                                  hideProgressBar: false,
+                                  closeOnClick: false,
+                                  pauseOnHover: true,
+                                  draggable: true,
+                                  progress: undefined,
+                                  theme: "light"
+                                })
+                                // handleReset()
+                            }
+                            else{
+                                toast.error(result.response.data, {
+                                            position: "top-center",
+                                            autoClose: 5000,
+                                            hideProgressBar: false,
+                                            closeOnClick: false,
+                                            pauseOnHover: true,
+                                            draggable: true,
+                                            progress: undefined,
+                                            theme: "light"
+                                          })
+                                          // handleReset()
+                            }
+                    }
+                    catch (err) {
+                        console.log(err);
+                    }
+                }     
+      }
+
+     useEffect(() => {
+         const storedToken = sessionStorage.getItem("token");
+         if (storedToken) {
+             setToken(JSON.parse(storedToken)); // removes extra quotes
+         }
+     }, []);
 
   return (
     <div>
@@ -67,24 +143,24 @@ function AdminBooks() {
                             <ModalBody className='!bg-amber-50  text-amber-950'>
                               <div className="space-y-6">
                                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                  <TextInput type="text" placeholder='Job Title'color="warning" className='w-100  !bg-amber-50 !text-amber-950 font-extrabold  me-3 my-2' />
-                                                                    <TextInput type="text" placeholder='Location'color="warning" className='w-100  !bg-amber-50 !text-amber-950 font-extrabold  me-3 my-2' />
+                                  <TextInput value={jobDetails.title} onChange={(e)=>setJobDetails({...jobDetails, title: e.target.value})} type="text" placeholder='Job Title'color="warning" className='w-100  !bg-amber-50 !text-amber-950 font-extrabold  me-3 my-2' />
+                                  <TextInput value={jobDetails.location} onChange={(e)=>setJobDetails({...jobDetails, location: e.target.value})} type="text" placeholder='Location'color="warning" className='w-100  !bg-amber-50 !text-amber-950 font-extrabold  me-3 my-2' />
 
-                                  <TextInput type="text" placeholder='Job type'color="warning" className='w-100  !bg-amber-50 !text-amber-950 font-extrabold  me-3 my-2' />
+                                  <TextInput value={jobDetails.jobType} onChange={(e)=>setJobDetails({...jobDetails, jobType: e.target.value})} type="text" placeholder='Job type'color="warning" className='w-100  !bg-amber-50 !text-amber-950 font-extrabold  me-3 my-2' />
 
-                                  <TextInput type="text" placeholder='Salary' color="warning" className='w-100  !text-amber-950 font-extrabold ' />
-                                  <TextInput type="text" placeholder='Qualification' color="warning" className='w-100   !text-amber-950 font-extrabold me-3 my-2'/>
-                                  <TextInput type="text" placeholder='Experience ' color="warning" className='w-100   !text-amber-950 font-extrabold '/>
+                                  <TextInput value={jobDetails.salary} onChange={(e)=>setJobDetails({...jobDetails, salary: e.target.value})} type="text" placeholder='Salary' color="warning" className='w-100  !text-amber-950 font-extrabold ' />
+                                  <TextInput value={jobDetails.qualification} onChange={(e)=>setJobDetails({...jobDetails, qualification: e.target.value})} type="text" placeholder='Qualification' color="warning" className='w-100   !text-amber-950 font-extrabold me-3 my-2'/>
+                                  <TextInput value={jobDetails.experience} onChange={(e)=>setJobDetails({...jobDetails, experience: e.target.value})} type="text" placeholder='Experience ' color="warning" className='w-100   !text-amber-950 font-extrabold '/>
                                 </p>
                                 <p className="text-base leading-relaxed ">
                                   <div className="max-w ">
                          
-                          <Textarea id="comment" placeholder="Description" color="warning" required rows={4} className='!bg-amber-50  !text-amber-950 font-extrabold ' />
+                          <Textarea value={jobDetails.description} onChange={(e)=>setJobDetails({...jobDetails, description: e.target.value})} id="comment" placeholder="Description" color="warning" required rows={4} className='!bg-amber-50  !text-amber-950 font-extrabold ' />
                         </div>        </p>
                               </div>
                             </ModalBody>
                             <ModalFooter>
-                              <Button onClick={() => setOpenModal(false)}>Add</Button>
+                              <Button onClick={handleAddJob}>Add</Button>
                               <Button color="alternative" onClick={() => setOpenModal(false)}>
                                Reset
                               </Button>
@@ -164,9 +240,9 @@ function AdminBooks() {
 
       </div>
       
-
+ <ToastContainer />
     </div>
   )
 }
 
-export default AdminBooks
+export default AdminCareers

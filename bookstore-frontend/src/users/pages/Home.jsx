@@ -4,12 +4,18 @@ import { GiBookshelf } from "react-icons/gi";
 import { Card } from 'flowbite-react';
 import PageFooter from '../../components/PageFooter';
 import { getHomeBookAPI } from '../../services/allAPIs';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { SearchContext } from '../../context/ContextShare';
+import { useContext } from 'react';
+import { IoSearch } from "react-icons/io5";
 
 
 
 function Home() {
-  
+  const navigate = useNavigate
+  const {searchKey, setSearchKey} = useContext(SearchContext)
+    console.log(searchKey); //""
+
   //To hold homebooks
   const [homeBooks, setHomeBooks] = useState([])
 
@@ -25,6 +31,24 @@ function Home() {
   }
   
   console.log(homeBooks); //array[4]
+
+  const hanldeSearch = ()=>{
+    // alert("searching")
+    const token = sessionStorage.getItem("token")
+    if(searchKey == ""){
+      alert("Please enter the book file")
+    }
+    else if(!token){
+       alert("Please Login") 
+       navigate('/login')
+    }
+    else if(searchKey && token){
+        navigate('/allBook')
+    }
+    else{
+        alert("Something went wrong")
+    }
+  }
   
 
   useEffect(() => {
@@ -42,12 +66,15 @@ function Home() {
             <div className="flex items-center rounded-md bg-amber-100 pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-indigo-600 mx-50">
               <div className="shrink-0 text-base text-gray-500 select-none sm:text-sm/6"><GiBookshelf className='text-2xl' /></div>
               <input
-                id="price"
-                name="price"
+                id="book"
+                name="book"
                 type="text"
+                value={searchKey}
+                onChange={(e) => setSearchKey(e.target.value)}
                 placeholder="Choose your book"
                 className="block w-2 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
               />
+              <button onClick={hanldeSearch} className="bg-amber-950 text-amber-100 border-2 rounded-4xl p-5"><IoSearch /></button>
             </div>
           </div>
         </div>

@@ -4,9 +4,59 @@ import { FaLocationDot } from "react-icons/fa6";
 import { Modal, ModalFooter } from "flowbite-react";
 import PageFooter from '../../components/PageFooter';
 import Header from '../components/Header';
+import { useEffect } from 'react';
+import { getAdminAllJobsAPI } from '../../services/allAPIs';
+
 
 function Careers() {
   const [openModal, setOpenModal] = useState(false);
+
+  const [alljobs, setAllJobs] = useState([]);
+
+
+  const [token, setToken] = useState()
+
+
+  //To hold Book Details
+  const [jobDetails, setJobDetails] = useState({
+    title: "", location: "", jobType: "", salary: "", qualification: "", experience: "", description: ""
+  })
+
+  const getAllJobs = async (token) => {
+      console.log("Get All Jobs");
+      console.log(token);
+  
+      //create request header, includes token
+      const reqHeader = { Authorization: `Bearer ${token}` }
+      console.log(reqHeader);
+  
+      try {
+        const result = await getAdminAllJobsAPI(reqHeader);
+        console.log(result);
+        console.log(result.data);
+        setAllJobs(result.data)
+        
+        
+      } catch (err) {
+        console.log(err);
+       
+      }
+    };
+
+    useEffect(() => {
+          const storedToken = sessionStorage.getItem("token");
+          if (storedToken) {
+              setToken(JSON.parse(storedToken)); // removes extra quotes
+          }
+      }, []);
+    
+      useEffect(() => {
+        if (token) {
+          getAllJobs(token); // Now runs only AFTER token is set
+        }
+      }, [token]);
+      console.log(token);
+  
 
   return (
     <div>
@@ -45,10 +95,11 @@ function Careers() {
       </div>
 
       {/* Job Card */}
-      <div className='mx-20 shadow bg-amber-200 rounded-lg mx-75'>
+      {alljobs?.length>0 ? alljobs.map((job)=>(
+      <div className='mx-20 shadow bg-amber-200 rounded-lg mx-75 p-4 m-4'>
         <div className='flex items-center justify-between px-6 py-4'>
           <div className='basis-1/3'>
-            <h1 className='text-2xl text-center mt-2'>HR Assistant</h1>
+            <h1 className='text-2xl text-center mt-2'>{job.title}</h1>
           </div>
           <div>
             <button
@@ -63,14 +114,15 @@ function Careers() {
         <hr className='mx-4' />
 
         <div className='px-6 py-4'>
-          <p className='flex items-center gap-2 text-ms font-bold'><FaLocationDot /> Location: Kochi</p>
-          <p className='text-ms'>Job type: Full-time</p>
-          <p className='text-ms'>Salary: ₹25,000 - ₹35,000</p>
-          <p className='text-ms'>Qualification: Any Degree</p>
-          <p className='text-ms'>Experience: 1+ year</p>
-          <p className='text-ms'>Description: Handle employee records, onboarding, and assist HR operations.</p>
+          <p className='flex items-center gap-y-8 text-ms font-bold'><FaLocationDot /> Location: Kochi</p>
+          <p className='text-ms'>Job type: {job.jobType}</p>
+          <p className='text-ms'>Salary: ₹{job.salary}</p>
+          <p className='text-ms'>Qualification: {job.qualification}</p>
+          <p className='text-ms'>Experience: {job.experience}</p>
+          <p className='text-ms'>Description: {job.description}</p>
         </div>
       </div>
+      )) :"No Openings"}
 
       {/* Modal with Floating Labels */}
       <Modal show={openModal} onClose={() => setOpenModal(false)}>

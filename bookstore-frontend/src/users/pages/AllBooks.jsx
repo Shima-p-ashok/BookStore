@@ -28,7 +28,6 @@ function AllBooks() {
       const reqHeader = {Authorization: `Bearer ${token}`}
     try {
       
-      
       //API call
       const result = await getAllBookAPI(searchKey, reqHeader)
       console.log(result);
@@ -169,7 +168,7 @@ console.log(token);
                       </p>
                     </Card>
                     </Link>
-                  </div>
+                   </div>
 
                 )) :
                 "No Books Found"

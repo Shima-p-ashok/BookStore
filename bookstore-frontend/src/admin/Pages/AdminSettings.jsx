@@ -4,7 +4,116 @@ import AdminHeader from '../components/AdminHeader'
 import { Label, Textarea, TextInput } from "flowbite-react";
 import { HiMail } from "react-icons/hi";
 import { Button } from "flowbite-react";
+import { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { getAdminDetailsAPI, updateAdminAPI } from '../../services/allAPIs';
+import { useEffect } from 'react';
+
+
 function AdminSettings() {
+
+  const [adminDetails, setAdminDetails] = useState({
+    username:"",
+    password:"",
+    cpassword:"",
+    profile:""
+  })
+
+  const [preview, setPreview] = useState("")
+  const [token, setToken] = useState()
+
+  const handleFile = (e)=>{
+    setAdminDetails({...adminDetails, profile:e.target.files[0]})
+    console.log(adminDetails.profile);
+
+     //obj URL conversion
+  const url = URL.createObjectURL(e.target.files[0])
+  console.log(url);
+  setPreview(url)
+  console.log(preview);
+  setAdminDetails({...adminDetails, profile:url})
+  }
+
+  const handleProfileUpdate = async()=>{
+    console.log(adminDetails);
+    //get values from from the state using destructuring
+        const { username, password, cpassword, profile} = adminDetails
+
+       
+             if(password!==cpassword){
+                 toast.warn("Password Mismatched!", {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light"
+                    })
+             }
+             else{
+                const reqHeader = {Authorization: `Bearer ${token}`}
+
+                const reqBody = new FormData()
+                for (let key in adminDetails) {
+                    reqBody.append(key, adminDetails[key])
+                }
+                try{
+                  const result = await updateAdminAPI(reqBody, reqHeader)
+                  console.log(result);
+                  setAdminDetails(result.data)
+                  handleGetAdminDetails(token)
+                  alert("Admin Details Updated")
+                  
+                  
+                }
+                catch(err){
+                  console.log(err);
+                  
+                }
+             }
+            
+          
+  }
+  
+  const handleReset = () => {
+   setAdminDetails({ username:"", password:"", cpassword:"", profile:""})
+   setPreview("")
+  }
+
+  const handleGetAdminDetails=async(token)=>{
+    console.log("Inside Admin Details");
+    console.log(token);
+    
+    const reqHeader = {Authorization: `Bearer ${token}`}
+        try {
+          
+          //API call
+          const result = await getAdminDetailsAPI(reqHeader)
+          console.log(result);
+          setAdminDetails(result.data[0])
+          console.log(adminDetails);
+        }
+        catch (err) {
+          console.log(err);
+        }
+  }
+
+  useEffect(() => {
+  const storedToken = sessionStorage.getItem("token");
+  if (storedToken) {
+    setToken(JSON.parse(storedToken)); // ensure token is clean
+  }
+}, []);
+
+useEffect(() => {
+  if (token) {
+    handleGetAdminDetails(token);
+  }
+}, [token]);
+
+
   return (
      <div>
         <AdminHeader/>
@@ -26,32 +135,32 @@ function AdminSettings() {
                         <div className="max-w-md">
                           <div className="md-2">
                            <label htmlFor="profile">
-                             <input id='profile' type="file" style={{display:'none '}} />
-                            <img src="https://icon-library.com/images/admin-icon-png/admin-icon-png-18.jpg" width={'200px'} alt="" />
+                             <input  id='profile' type="file" style={{display:'none '}} onChange={e=>handleFile(e)} />
+                            <img src={preview?preview:"https://icon-library.com/images/admin-icon-png/admin-icon-png-18.jpg"} width={'200px'} alt="" />
                            </label>
                           </div>
 
                          <div className="mb-2 block">
                            <Label htmlFor="name" className='text-amber-50' >Your Name</Label>
                          </div>
-                         <TextInput id="name" type="text"  placeholder="John Doe" required />
+                         <TextInput onChange={e=>setAdminDetails({...adminDetails, username:e.target.value})} value={adminDetails.username} id="name" type="text"  placeholder="John Doe" required />
                        </div>
                        <div className="max-w-md">
                          <div className="mb-2 block">
-                           <Label htmlFor="email4" className='text-amber-50'>Your email</Label>
+                           <Label htmlFor="email4" className='text-amber-50'>Your Password</Label>
                          </div>
-                         <TextInput id="email4" type="email" icon={HiMail} placeholder="name@flowbite.com" required />
+                         <TextInput onChange={e=>setAdminDetails({...adminDetails, password:e.target.value})} value={adminDetails.password} id="p" type="password"  placeholder="name@flowbite.com" required />
                        </div>
                        <div className="max-w-md">
                          <div className="mb-2 block">
-                           <Label htmlFor="comment" className='text-amber-50'>Your message</Label>
+                           <Label htmlFor="comment" className='text-amber-50'>Confirm Password</Label>
                          </div>
-                        <TextInput id="email4" type="password" icon={HiMail} placeholder="password" required />
+                        <TextInput onChange={e=>setAdminDetails({...adminDetails, cpassword:e.target.value})} value={adminDetails.cpassword} id="cp" type="password"  placeholder="password" required />
 
                        </div>
                      <div className='flex justify-evenly my-10'>
-                        <Button className='!bg-amber-950 '>Reset</Button>
-                          <Button className='!bg-amber-950 '>Update</Button>
+                        <Button onClick={handleReset} className='!bg-amber-950 '>Reset</Button>
+                          <Button onClick={handleProfileUpdate} className='!bg-amber-950 '>Update</Button>
                      </div>
                      </form>
                    </div>
@@ -59,6 +168,7 @@ function AdminSettings() {
                  </div>
             </div>
         </div>
+         <ToastContainer />
     </div>
   )
 }

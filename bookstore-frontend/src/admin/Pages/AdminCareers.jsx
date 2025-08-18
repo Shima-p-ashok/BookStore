@@ -137,7 +137,7 @@ function AdminCareers() {
 
    useEffect(() => {
       const storedToken = sessionStorage.getItem("token");
-      if (storedToken) {
+      if (storedToken) { 
           setToken(JSON.parse(storedToken)); // removes extra quotes
       }
   }, []);
@@ -251,7 +251,7 @@ function AdminCareers() {
                       <p className='text-ms'>Experience: {job.experience}</p>
                       <p className='text-ms'>Description: {job.description}</p>
                     </div>
-                  </div>)) :""}
+                  </div>)) :"No Openings"}
                 </div> 
 
                 :

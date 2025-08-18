@@ -52,7 +52,7 @@ function Profile() {
 
     //Submit
     const handleAddBook = async () => {
-        //get valuesz from from the state using destructuring
+        //get values from from the state using destructuring
         const { title, author, noofpages, imageUrl, price, dprice, abstract, publisher, language, isbn, category, UploadedImage } = bookDetails
         //create request header includes token
         if (!title || !author || !noofpages || !imageUrl || !price || !dprice || !abstract || !publisher || !language || !isbn || !category || !UploadedImage) {

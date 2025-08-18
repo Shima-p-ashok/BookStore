@@ -98,3 +98,36 @@ exports.getAllUsersAdminController = async(req,res) =>{
         res.status(500).json("Err" + err)
     }
 }
+
+
+exports.updateAdminDetails = async(req, res) =>{
+    console.log("Inside Admin Profile Update");
+    const {username, password, profile} = req.body
+    pro = req.file ? req.file.filename : profile
+    const email = req.payload.userMail
+    console.log(username, password, pro, email);
+
+    try{
+        const adminDetails = await users.findOneAndUpdate({email}, {username, email, password, profile:pro}, {new:true})
+        await adminDetails.save()
+        res.status(200).json(adminDetails)
+    }
+    catch(err){
+       res.status(500).json("Err" + err)
+    }
+}
+
+exports.getAdminDetails=async(req, res)=>{
+    const email = req.payload.userMail
+    try{
+        const adminDetails = await users.find({email, bio:"Admin"})
+        if (!adminDetails) {
+            res.status(400).json({message:"Not Found"})
+        }
+        else{
+             res.status(200).json(adminDetails)
+        }
+    }catch(err){
+        res.status(500).json("Err" + err)
+    }
+}

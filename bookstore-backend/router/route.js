@@ -30,6 +30,11 @@ route.post('/api/admin-addJobs',jwtMiddleware,jobcontroller.addJobs)
 route.get('/api/admin-allJobs',jwtMiddleware,jobcontroller.getAllJobs)
 route.delete('/api/admin-deleteJobs/:id', jobcontroller.deleteJobs)
 
+//Adminprofile
+route.put('/api/updateAdmin', jwtMiddleware, multerMiddleware.single('profile'), usercontroller.updateAdminDetails )
+
+route.get('/api/admin-Details', jwtMiddleware, usercontroller.getAdminDetails)
+
 
 
 //export the route

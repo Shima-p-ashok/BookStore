@@ -57,8 +57,7 @@ exports.getAllBooks=async(req, res)=>{
       },
       userMail:{
         $ne:email
-      },
-      status: "approved"
+      }
 
     }
 
@@ -101,7 +100,7 @@ exports.getAllBookAdminController = async(req,res) =>{
 exports.approveBooksadminController = async(req,res)=>{
         const {_id,title,author,noofpages,imageUrl,price,dprice,abstract,publisher,language,isbn,category, UploadedImage, status,userMail,brought}=req.body
         try{
-            const existingBook = await books.findByIdAndUpdate({_id},{title,author,noofpages,imageUrl,price,dprice,abstract,publisher,language,isbn,category, UploadedImage, status:'approved',userMail,brought},{new:true})
+            const existingBook = await books.findOneAndUpdate({_id},{title,author,noofpages,imageUrl,price,dprice,abstract,publisher,language,isbn,category, UploadedImage, status:'approved',userMail,brought},{new:true})
             await existingBook.save()
             res.status(200).json(existingBook)
 

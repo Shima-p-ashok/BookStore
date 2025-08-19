@@ -15,9 +15,12 @@ import AdminBooks from './admin/Pages/AdminBooks'
 import AdminCareers from './admin/Pages/AdminCareers'
 import AdminSettings from './admin/Pages/AdminSettings'
 
+import PaymentError from './users/pages/PaymentError';
+import PaymentSuccess from './users/pages/PaymentSuccess';
 
 import PageNotFound from './pages/PagenotFound';
 import EditProfile from './users/components/EditProfile';
+
 
 
 
@@ -49,6 +52,9 @@ function App() {
         <Route path='admin-books' element={<AdminBooks/>}/>
         <Route path='admin-career' element={<AdminCareers/>}/>
         <Route path='admin-settings' element={<AdminSettings/>}/>
+        
+        <Route path='payment-success' element={<PaymentSuccess/>}/>
+        <Route path='payment-error' element={<PaymentError/>}/>
 
         <Route path='/*' element={<PageNotFound/>}/>
       </Routes>

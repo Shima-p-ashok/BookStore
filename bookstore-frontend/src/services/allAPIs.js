@@ -53,7 +53,7 @@ export const getAdminAllJobsAPI = (reqHeader) => {
 }
 
 export const deleteAdminAJobsAPI = (id, reqHeader) => {
-    return commonAPI('DELETE', `${serverURL}/api/admin-deleteJobs/${id}`, "", {})
+    return commonAPI('DELETE', `${serverURL}/api/admin-deleteJobs/${id}`, "", reqHeader)
 }
 
 //---------------------------------AdminProfile-------------------------------
@@ -63,4 +63,10 @@ export const updateAdminAPI = (reqBody, reqHeader) => {
 
 export const getAdminDetailsAPI = (reqHeader) => {
     return commonAPI('GET', `${serverURL}/api/admin-Details`, "", reqHeader)
+}
+
+
+//---------------------------Payment--------------------------------
+export const makePaymentAPI = (reqBody, reqHeader) => {
+    return commonAPI('PUT', `${serverURL}/api/make-payment`, reqBody, reqHeader)
 }

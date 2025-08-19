@@ -16,6 +16,8 @@ function Home() {
   const {searchKey, setSearchKey} = useContext(SearchContext)
     console.log(searchKey); //""
 
+  const [token, setToken] = useState("")
+
   //To hold homebooks
   const [homeBooks, setHomeBooks] = useState([])
 
@@ -50,10 +52,18 @@ function Home() {
     }
   }
   
+   useEffect(() => {
+      const storedToken = sessionStorage.getItem("token");
+      if (storedToken) {
+        setToken(JSON.parse(storedToken)); // removes extra quotes
+      }
+    }, []);
 
   useEffect(() => {
-    getHomeBooks()
-  }, [])
+     if (token) {
+      getHomeBooks(token);
+    }
+  }, [token]);
 
   return (
     <div>
@@ -111,7 +121,12 @@ function Home() {
           
         </div>
         <div className="text-center m-4">
-        <Link to='/allbooks'><button className="bg-amber-950 text-amber-100 border-2 rounded-4xl p-5">Explore More</button></Link>
+          {
+            token?
+                    <Link to='/allbooks'><button className="bg-amber-950 text-amber-100 border-2 rounded-4xl p-5">Explore More</button></Link>
+            :
+                    <Link to='/'><button className="bg-amber-950 text-amber-100 border-2 rounded-4xl p-4 opacity-70 cursor-not-allowed">Explore More</button></Link>
+          }
         </div>
       </section>
       <section className="bg-amber-100 p-10">

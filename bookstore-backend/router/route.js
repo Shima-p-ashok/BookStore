@@ -35,6 +35,8 @@ route.put('/api/updateAdmin', jwtMiddleware, multerMiddleware.single('profile'),
 
 route.get('/api/admin-Details', jwtMiddleware, usercontroller.getAdminDetails)
 
+//Payment
+route.put('/api/make-payment', jwtMiddleware, bookcontroller.makepayment)
 
 
 //export the route

@@ -53,6 +53,7 @@ function Header() {
             : `${serverURL}/upload/${userData}`
         }
         alt="user icon"
+        referrerPolicy='no referrer'
         className="w-10 h-10 rounded-full object-cover"
       />
       
